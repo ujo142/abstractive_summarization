@@ -18,6 +18,7 @@ class T5(pl.LightningModule):
         max_source_length=512,
         max_target_length=128,
         model_load_directory=None,
+        dev=None,
     ):
         super().__init__()
         self.learning_rate = learning_rate
@@ -28,7 +29,7 @@ class T5(pl.LightningModule):
         self.multiply_lr_step = multiply_lr_step
         self.max_source_length = max_source_length
         self.max_target_length = max_target_length
-       
+        self.dev = dev
 
 
     def forward(self, input_sequences, output_sequences, **kwargs):
@@ -57,9 +58,9 @@ class T5(pl.LightningModule):
         labels = torch.tensor(labels)
 
         loss = self.model(
-            input_ids=input_ids.to("cpu"),
-            attention_mask=attention_mask.to("cpu"),
-            labels=labels.to("cpu"),
+            input_ids=input_ids.to(self.dev),
+            attention_mask=attention_mask.to(self.dev),
+            labels=labels.to(self.dev),
         ).loss
         return loss
 
